@@ -3,7 +3,8 @@ error_reporting ( 0 );
 require ("../connection.php");
 
 $apikey = $_GET ['apikey'];
-$code = $_GET ['code'];
+$username = $_GET ['username'];
+$message = $_GET ['message'];
 
 if (! empty ( $apikey )) {
 	$api = mysql_query ( "SELECT * FROM apikey WHERE api_key = '" . $apikey . "'" ) or die ( "{\"status\":0," . "\"error\":\"" . mysql_error () . "\"}" );
@@ -13,20 +14,14 @@ if (! empty ( $apikey )) {
 } else {
 	die ( "{\"status\":0," . "\"error\":\"invalid apikey\"}" );
 }
-if ($code) {
-	$query = mysql_query ( "DELETE FROM featured WHERE code = '" . $code . "'" ) or die ( "{\"status\":0," . "\"error\":\"" . mysql_error () . "\"}" );
-	if ($query) {
-		echo "{";
-		echo "\"status\":1,";
-		echo "\"customer\":\"deleted\"";
-		echo "}";
-	} else {
-		echo "{";
-		echo "\"status\":0,";
-		echo "\"error\":\"enter code\"";
-		echo "}";
-	}
+
+if ($username && $message) {
+	$query = mysql_query("INSERT INTO `feedback`(`username`, `message`) VALUES ('$username', '$message')") or die ( "{\"status\":0," . "\"error\":\"" . mysql_error () . "\"}" );
+	echo "{";
+	echo '"status":1,';
+	echo '"username":"'.$username.'",';
+	echo '"message":"'.$message.'"';
 }else{
-	die ( "{\"status\":0," . "\"error\":\"enter code\"}" );
+	die ( "{\"status\":0," . "\"error\":\"Enter username, message\"}" );
 }
 ?>
