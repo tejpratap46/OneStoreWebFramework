@@ -15,11 +15,14 @@ if (! empty ( $apikey )) {
 }
 
 if (! empty ( $username )) {
-	$query = mysql_query ( "SELECT items FROM `lists` WHERE `customerid` = '$username' ORDER BY `lists`.`listid` DESC LIMIT $start,$limit" ) or die ( "{\"status\":0," . "\"error\":\"" . mysql_error () . "\"}" );
+  $que = mysql_query("SELECT bankid FROM customer WHERE username='$username'") or die ( "{\"status\":0," . "\"error\":\"" . mysql_error () . "\"}" );
+  $inf = mysql_fetch_array ( $que );
+
+	$query = mysql_query ( "SELECT items FROM `payment_completed` WHERE `fromid` = '".$inf['bankid']."' ORDER BY `payment_completed`.`listid` DESC LIMIT $start,$limit" ) or die ( "{\"status\":0," . "\"error\":\"" . mysql_error () . "\"}" );
 	$items = "";
 	for($i = 0; $i < mysql_num_rows ( $query ); $i ++) {
 		$info = mysql_fetch_array ( $query );
-		$items = $items . $info ['items'];
+		$items = $items . $info ['listitems'];
 	}
 	preg_match_all ( "#<id.*?>([^<]+)</id>#", $items, $matches );
 	$itemcount = array_count_values ( $matches [1] );
